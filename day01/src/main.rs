@@ -21,11 +21,20 @@ fn parse(path : &String) -> Result<(Vec<i32>,Vec<i32>), Error> {
     Ok((vec1,vec2))
 }
 
-fn diff(a: Vec<i32>, b: Vec<i32>) -> Vec<i32> {
+fn diff(a: &Vec<i32>, b: &Vec<i32>) -> Vec<i32> {
     let mut result = Vec::new();
-    for (av, bv) in a.iter().zip(&b) {
+    for (av, bv) in a.iter().zip(b) {
         let rv = av-bv;
         result.push(rv.abs())
+    }
+    result
+}
+
+fn sim(a: &Vec<i32>, b: &Vec<i32>) -> Vec<i32> {
+    let mut result = Vec::new();
+    for av in a.iter() {
+        let rv = b.iter().filter(|&x| {*x == *av}).count() as i32;
+        result.push(rv * av);
     }
     result
 }
@@ -40,7 +49,11 @@ fn main() {
     // dbg!(&lst1);
     // dbg!(&lst2);
 
-    let result = diff(lst1, lst2);
+    let result = diff(&lst1, &lst2);
     let rst : i32 = result.iter().sum();
-    println!("The result is: {}", rst)
+    println!("The result is: {}", rst);
+
+    let result2 = sim(&lst1, &lst2);
+    let rst2 : i32 = result2.iter().sum();
+    println!("The result is: {}", rst2);
 }
