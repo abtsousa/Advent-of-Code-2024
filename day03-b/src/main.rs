@@ -1,7 +1,8 @@
 use regex::Regex;
 
 pub fn main() {
-    let re = Regex::new(r"mul\((?<d1>\d+),(?<d2>\d+)\)").unwrap();
+    // TODO: capture mul() before first don't() and after last do()
+    let re = Regex::new(r"do\(\).*mul\((?<d1>\d+),(?<d2>\d+)\).*don't\(\)").unwrap();
     let input = include_str!("../input.txt"); // Get the input
 
     let caps: Vec<i32> = re.captures_iter(input)
