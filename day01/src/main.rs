@@ -1,11 +1,46 @@
 use std::env;
-use std::fs;
+use std::fs::File;
+use std::io::{BufReader, BufRead, Error};
+
+fn parse(path : &String) -> Result<(Vec<i32>,Vec<i32>), Error> {
+    let f = File::open(path)?;
+    let reader = BufReader::new(f);
+
+    let mut vec1 : Vec<i32> = Vec::new();
+    let mut vec2 : Vec<i32> = Vec::new();
+
+    for line in reader.lines() {
+        let line = line.unwrap();
+        let mut words = line.split_whitespace();
+        if let (Some(word1), Some(word2)) = (words.next(), words.next()) {
+            vec1.push(word1.parse().unwrap());
+            vec2.push(word2.parse().unwrap());
+        }
+    }
+
+    Ok((vec1,vec2))
+}
+
+fn diff(a: Vec<i32>, b: Vec<i32>) -> Vec<i32> {
+    let mut result = Vec::new();
+    for (av, bv) in a.iter().zip(&b) {
+        let rv = av-bv;
+        result.push(rv.abs())
+    }
+    result
+}
 
 fn main() {
     let args: Vec<String> = env::args().collect();
     let file_path = &args[1];
-    dbg!(file_path);
-    let contents = fs::read_to_string(file_path).unwrap();
+    // dbg!(file_path);
 
-    println!("{contents}");
+    let (mut lst1, mut lst2) = parse(file_path).unwrap();
+    lst1.sort(); lst2.sort();
+    // dbg!(&lst1);
+    // dbg!(&lst2);
+
+    let result = diff(lst1, lst2);
+    let rst : i32 = result.iter().sum();
+    println!("The result is: {}", rst)
 }
