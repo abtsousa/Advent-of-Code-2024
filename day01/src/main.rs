@@ -2,7 +2,7 @@ use std::env;
 use std::fs::File;
 use std::io::{BufReader, BufRead, Error};
 
-fn parse(path : &String) -> Result<(Vec<i32>,Vec<i32>), Error> {
+fn parse(path : &str) -> Result<(Vec<i32>,Vec<i32>), Error> {
     let f = File::open(path)?;
     let reader = BufReader::new(f);
 
@@ -10,7 +10,7 @@ fn parse(path : &String) -> Result<(Vec<i32>,Vec<i32>), Error> {
     let mut vec2 : Vec<i32> = Vec::new();
 
     for line in reader.lines() {
-        let line = line.unwrap();
+        let line = line?;
         let mut words = line.split_whitespace();
         if let (Some(word1), Some(word2)) = (words.next(), words.next()) {
             vec1.push(word1.parse().unwrap());
@@ -21,7 +21,7 @@ fn parse(path : &String) -> Result<(Vec<i32>,Vec<i32>), Error> {
     Ok((vec1,vec2))
 }
 
-fn diff(a: &Vec<i32>, b: &Vec<i32>) -> Vec<i32> {
+fn diff(a: &[i32], b: &[i32]) -> Vec<i32> {
     let mut result = Vec::new();
     for (av, bv) in a.iter().zip(b) {
         let rv = av-bv;
@@ -30,7 +30,7 @@ fn diff(a: &Vec<i32>, b: &Vec<i32>) -> Vec<i32> {
     result
 }
 
-fn sim(a: &Vec<i32>, b: &Vec<i32>) -> Vec<i32> {
+fn sim(a: &[i32], b: &[i32]) -> Vec<i32> {
     let mut result = Vec::new();
     for av in a.iter() {
         let rv = b.iter().filter(|&x| {*x == *av}).count() as i32;
